@@ -100,17 +100,15 @@ async def generic_error_handler(request: Request, exc: Exception):
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────
-
-@app.get("/health", response_model=HealthResponse, tags=["System"])
+@app.get("/health", tags=["System"])
 async def health_check():
-    """System health check — verifies KB and vector store are ready."""
-    retriever = get_retriever()
-    return HealthResponse(
-        status="healthy",
-        version="1.0.0",
-        kb_articles=retriever.article_count,
-        chroma_ready=retriever.article_count > 0,
-    )
+    """Lightweight system health check."""
+    
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "service": "CloudDash Support API"
+    }
 
 
 @app.post("/conversations", response_model=StartConversationResponse, tags=["Conversations"])
