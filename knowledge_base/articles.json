@@ -1,0 +1,182 @@
+[
+  {
+    "id": "KB-001",
+    "title": "How to Reset Your CloudDash API Key",
+    "category": "faq",
+    "tags": ["api-key", "reset", "security", "authentication"],
+    "content": "To reset your CloudDash API key:\n1. Log in to your CloudDash dashboard at app.clouddash.io.\n2. Navigate to Settings > API & Integrations.\n3. Click 'Regenerate API Key' next to your current key.\n4. Confirm the action in the dialog box. Your old key will be immediately invalidated.\n5. Copy the new key and update it in all your integrations (AWS, GCP, Azure agents, SDKs).\n\nIMPORTANT: Regenerating your API key will immediately break any active integrations using the old key. Plan this during a low-traffic window.\n\nNote: API keys are scoped per workspace. If you have multiple workspaces, each has its own key.",
+    "last_updated": "2026-04-15",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-002",
+    "title": "Supported Cloud Providers",
+    "category": "faq",
+    "tags": ["cloud-providers", "aws", "gcp", "azure", "integrations"],
+    "content": "CloudDash currently supports the following cloud providers:\n\n**Amazon Web Services (AWS)**\n- EC2, RDS, Lambda, ECS, EKS, S3, CloudFront, and 80+ services via CloudWatch metrics.\n- Supports cross-account monitoring via IAM role assumption.\n\n**Google Cloud Platform (GCP)**\n- Compute Engine, GKE, Cloud Functions, Cloud SQL, BigQuery, and 50+ services via Cloud Monitoring.\n- Supports multi-project monitoring with a single service account.\n\n**Microsoft Azure**\n- Virtual Machines, AKS, Azure Functions, SQL Database, Cosmos DB, and 60+ services via Azure Monitor.\n- Supports multi-subscription monitoring.\n\n**Multi-Cloud Dashboards**\nAll providers can be monitored from a single unified dashboard. You can create cross-cloud alert policies and cost comparison views.\n\nAdditional provider support (e.g., DigitalOcean, Oracle Cloud) is on the roadmap for Q3 2026.",
+    "last_updated": "2026-04-10",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-003",
+    "title": "How to Invite Team Members",
+    "category": "faq",
+    "tags": ["team", "invite", "users", "access", "collaboration"],
+    "content": "To invite team members to your CloudDash workspace:\n\n1. Go to Settings > Team Management.\n2. Click 'Invite Member'.\n3. Enter the invitee's email address.\n4. Select their role:\n   - **Viewer**: Read-only access to dashboards and alerts.\n   - **Editor**: Can create and edit dashboards, alerts, and integrations.\n   - **Admin**: Full access including billing and team management.\n5. Click 'Send Invitation'. The invitee will receive an email with a link valid for 48 hours.\n\n**Plan Limits:**\n- Starter: Up to 3 team members\n- Pro: Up to 20 team members\n- Enterprise: Unlimited team members\n\nIf an invitation expires, you can resend it from Settings > Team Management > Pending Invitations.",
+    "last_updated": "2026-03-22",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-004",
+    "title": "Alerts Not Firing — Troubleshooting Guide",
+    "category": "troubleshooting",
+    "tags": ["alerts", "not-firing", "notifications", "debugging"],
+    "content": "If your CloudDash alerts are not firing as expected, follow these steps:\n\n**Step 1 — Verify Alert Status**\nGo to Alerts > Alert Policies. Check that the policy is set to 'Active' (green indicator). A grey indicator means the alert is paused or in a draft state.\n\n**Step 2 — Check Notification Channels**\nNavigate to Alerts > Notification Channels. Confirm the channel (Slack, PagerDuty, email, webhook) is connected and authenticated. Click 'Test' to send a test notification.\n\n**Step 3 — Review Threshold Configuration**\nOpen the alert policy and review the threshold conditions. Ensure the metric name exactly matches the metric emitted by your cloud provider. A common mistake is using 'CPUUtilization' vs 'cpu_utilization'.\n\n**Step 4 — Validate Data Ingestion**\nGo to Integrations and verify your cloud integration shows 'Healthy' status. If it shows 'Degraded' or 'Error', re-authenticate or check IAM/service account permissions.\n\n**Step 5 — Check Mute Rules**\nConfirm no active mute rules are suppressing the alert. Go to Alerts > Mute Rules.\n\n**Step 6 — Inspect Alert Evaluation Logs**\nIn the alert policy detail page, scroll to 'Evaluation History'. This shows every evaluation cycle, threshold value, and whether the condition was met.\n\nIf alerts still do not fire after these steps, contact support with your alert policy ID.",
+    "last_updated": "2026-04-18",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-005",
+    "title": "Dashboard Loading Slowly — Performance Troubleshooting",
+    "category": "troubleshooting",
+    "tags": ["dashboard", "slow", "performance", "loading", "latency"],
+    "content": "If your CloudDash dashboard is loading slowly, follow these steps:\n\n**Step 1 — Reduce Time Range**\nLarge time ranges (e.g., 90 days) query significantly more data. Start with a 1-hour or 24-hour range to confirm the dashboard loads correctly at lower volumes.\n\n**Step 2 — Limit Widget Count**\nDashboards with more than 20 widgets may experience slower load times. Consider splitting large dashboards into multiple focused dashboards.\n\n**Step 3 — Enable Caching**\nIn Dashboard Settings > Performance, enable 'Query Caching'. Cached dashboards refresh every 60 seconds by default but load immediately for subsequent views.\n\n**Step 4 — Use Metric Aggregation**\nHigh-cardinality metrics (many time-series) slow queries. In your widget configuration, apply aggregations like avg(), max(), or p95() instead of raw time-series.\n\n**Step 5 — Check Browser Console**\nOpen browser DevTools (F12) and check the Network tab. If specific API calls are timing out (>10s), note the endpoint and share with support.\n\n**Step 6 — Try a Different Browser or Incognito Mode**\nBrowser extensions (ad blockers, privacy tools) can interfere with WebSocket connections used for real-time metrics.\n\nIf performance issues persist, open a support ticket with your dashboard ID and a screenshot of the Network tab.",
+    "last_updated": "2026-04-05",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-006",
+    "title": "AWS CloudWatch Integration Failing — Setup & Fix Guide",
+    "category": "troubleshooting",
+    "tags": ["aws", "cloudwatch", "integration", "iam", "permissions", "credentials"],
+    "content": "If your AWS CloudWatch integration is failing or showing errors, follow this guide:\n\n**Common Error: 'AccessDenied' or 'Invalid Credentials'**\n\nStep 1 — Create or Update IAM Role\nCloudDash requires a read-only IAM role with the following policies:\n- CloudWatchReadOnlyAccess\n- AWSCostExplorerFullAccess (for cost data)\n- AmazonEC2ReadOnlyAccess\n\nStep 2 — Update Trust Policy\nThe role's trust policy must allow CloudDash's AWS account (ID: 123456789012) to assume it:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": { \"AWS\": \"arn:aws:iam::123456789012:root\" },\n    \"Action\": \"sts:AssumeRole\"\n  }]\n}\n```\n\nStep 3 — Re-enter Credentials in CloudDash\nGo to Integrations > AWS > Edit. Enter the new Role ARN and external ID. Click 'Test Connection' before saving.\n\n**Common Error: 'No metrics found'**\n- Confirm the AWS region selected in CloudDash matches where your resources are deployed.\n- Ensure CloudWatch metrics are enabled for the services you want to monitor (some services require manual enablement).\n\n**After Updating Credentials**\nAlerts that depend on the AWS integration will resume automatically once the integration shows 'Healthy'. It may take up to 5 minutes for data to appear.",
+    "last_updated": "2026-04-20",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-007",
+    "title": "SSO (Single Sign-On) Setup Guide",
+    "category": "account",
+    "tags": ["sso", "saml", "okta", "azure-ad", "authentication", "enterprise"],
+    "content": "CloudDash supports SAML 2.0-based SSO, compatible with Okta, Azure AD, Google Workspace, and any SAML 2.0-compliant identity provider.\n\n**Prerequisites**\n- Enterprise plan subscription.\n- Admin access to both CloudDash and your Identity Provider (IdP).\n\n**Step-by-Step Setup**\n\n1. In CloudDash, go to Settings > Security > Single Sign-On.\n2. Click 'Configure SSO'. Note the following values (needed for your IdP):\n   - Assertion Consumer Service (ACS) URL: https://app.clouddash.io/auth/saml/callback\n   - Entity ID / Audience URI: https://app.clouddash.io/saml/metadata\n3. In your IdP (e.g., Okta), create a new SAML application using the above values.\n4. Map the following attributes in your IdP:\n   - email → user.email\n   - firstName → user.firstName\n   - lastName → user.lastName\n   - role → (optional, for auto role assignment)\n5. Download the IdP metadata XML from your IdP.\n6. Upload the metadata XML to CloudDash under the SSO configuration page.\n7. Click 'Test SSO' to verify the connection before enabling.\n8. Enable SSO. Once enabled, all users must log in via SSO. Password login is disabled.\n\n**Important:** Before enabling SSO, ensure at least one Admin account is included in the IdP application to avoid lockout.",
+    "last_updated": "2026-03-30",
+    "applies_to": ["Enterprise"]
+  },
+  {
+    "id": "KB-008",
+    "title": "Role-Based Access Control (RBAC) Configuration",
+    "category": "account",
+    "tags": ["rbac", "roles", "permissions", "access-control", "security"],
+    "content": "CloudDash uses role-based access control (RBAC) to manage what team members can see and do.\n\n**Built-in Roles**\n\n| Role | Description |\n|------|-------------|\n| Viewer | Read-only: can view dashboards, alerts, and reports. Cannot modify anything. |\n| Editor | Can create/edit dashboards, alert policies, and integrations. Cannot manage team or billing. |\n| Admin | Full access including team management, SSO config, and billing. |\n| Billing Admin | Access to billing and subscription management only. No access to monitoring data. |\n\n**Custom Roles (Enterprise only)**\nEnterprise customers can create custom roles with granular permissions:\n1. Go to Settings > Roles & Permissions > Create Custom Role.\n2. Select individual permissions from the permission matrix.\n3. Assign the role to team members from Settings > Team Management.\n\n**Dashboard-Level Access Control**\nIn addition to workspace roles, you can restrict individual dashboards:\n- Open the dashboard > Share > Restrict Access.\n- Select specific team members or roles that can view or edit the dashboard.\n\nThis is useful for separating team-level visibility (e.g., only the DevOps team can see infrastructure dashboards).",
+    "last_updated": "2026-04-01",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-009",
+    "title": "CloudDash Pricing Plans Overview",
+    "category": "billing",
+    "tags": ["pricing", "plans", "starter", "pro", "enterprise", "cost"],
+    "content": "CloudDash offers three subscription plans:\n\n**Starter — $49/month**\n- Up to 3 team members\n- Up to 5 cloud integrations\n- 7-day data retention\n- Email and Slack notifications\n- Community support\n\n**Pro — $199/month**\n- Up to 20 team members\n- Up to 25 cloud integrations\n- 90-day data retention\n- All notification channels (PagerDuty, OpsGenie, webhooks)\n- Priority email support (24h response SLA)\n- Custom alert policies\n- Cost optimization recommendations\n\n**Enterprise — Custom pricing**\n- Unlimited team members and integrations\n- 13-month data retention\n- SSO (SAML 2.0)\n- Custom RBAC\n- Dedicated Slack support channel\n- SLA: 99.99% uptime guarantee\n- Onboarding and professional services\n- Custom data residency options\n\nAll plans are billed monthly or annually (annual billing offers a 20% discount). Prices are in USD and exclude applicable taxes.",
+    "last_updated": "2026-04-15",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-010",
+    "title": "How to Upgrade or Downgrade Your Plan",
+    "category": "billing",
+    "tags": ["upgrade", "downgrade", "plan-change", "subscription"],
+    "content": "**Upgrading Your Plan**\n\n1. Go to Settings > Billing & Subscription.\n2. Click 'Change Plan'.\n3. Select the desired plan and review the pricing summary.\n4. Confirm the upgrade. Your new plan activates immediately.\n5. You will be charged a prorated amount for the remainder of the current billing cycle.\n\n**Downgrading Your Plan**\n\n1. Go to Settings > Billing & Subscription.\n2. Click 'Change Plan' and select a lower-tier plan.\n3. Review what features will be lost (a checklist is shown).\n4. Confirm the downgrade. The downgrade takes effect at the end of the current billing cycle — you retain access to your current plan until then.\n\n**Important Notes on Downgrading:**\n- If your current usage exceeds the lower plan's limits (e.g., more than 3 team members on Starter), you must reduce usage before the downgrade takes effect or the system will automatically remove the most recently added members.\n- Data exceeding the lower plan's retention period will be permanently deleted after a 14-day grace period.\n\n**Enterprise Plans:**\nEnterprise plan changes require contacting your account manager. Self-service plan changes are not available for Enterprise accounts.",
+    "last_updated": "2026-04-10",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-011",
+    "title": "Refund and Cancellation Policy",
+    "category": "billing",
+    "tags": ["refund", "cancellation", "policy", "billing"],
+    "content": "**Cancellation Policy**\n\nYou can cancel your CloudDash subscription at any time from Settings > Billing > Cancel Subscription.\n- Cancellations take effect at the end of the current billing cycle.\n- You will retain full access to your plan until the cycle ends.\n- After cancellation, your data is retained for 30 days, after which it is permanently deleted.\n\n**Refund Policy**\n\nCloudDash offers refunds under the following conditions:\n- **Within 14 days of initial subscription**: Full refund, no questions asked. Contact support@clouddash.io.\n- **Duplicate charges**: If you were charged twice for the same billing cycle, a full refund of the duplicate charge will be issued within 5–7 business days.\n- **Service outages**: If CloudDash experiences a verified outage exceeding 4 hours in a billing cycle, a prorated credit (not cash refund) will be applied to your next invoice.\n- **Annual plan (unused period)**: If you cancel an annual subscription after 14 days, a prorated refund for unused full months may be issued at CloudDash's discretion.\n\n**Refunds are NOT issued for:**\n- Partial month usage after the 14-day window.\n- Feature dissatisfaction without a documented service failure.\n- Failure to cancel before the renewal date.\n\nTo request a refund, contact billing@clouddash.io with your account ID and invoice number. Refund requests are reviewed within 3 business days. Refunds above $500 require manager approval, which may take an additional 2 business days.",
+    "last_updated": "2026-04-12",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-012",
+    "title": "Understanding Your Invoice",
+    "category": "billing",
+    "tags": ["invoice", "billing", "charges", "receipt"],
+    "content": "Your CloudDash invoice is generated on the 1st of each billing cycle and is available in Settings > Billing > Invoice History.\n\n**Invoice Line Items Explained**\n\n- **Base subscription**: The flat monthly fee for your current plan.\n- **Prorated charges**: Charges for plan upgrades or added integrations mid-cycle. Calculated as (daily rate × days remaining in cycle).\n- **Overage charges**: If you exceed your plan's included integrations, additional integrations are charged at $10/integration/month.\n- **Taxes**: VAT or GST may be applied based on your billing address.\n\n**Payment Methods Accepted**\n- Credit/debit cards (Visa, Mastercard, Amex)\n- ACH bank transfer (US customers, annual plans only)\n- Wire transfer (Enterprise customers only)\n\n**Failed Payments**\nIf a payment fails:\n1. CloudDash retries the charge after 3 days and again after 7 days.\n2. You will receive email notifications for each failed attempt.\n3. If payment is not resolved within 14 days, the account is suspended (data preserved for 30 days).\n4. To update payment details, go to Settings > Billing > Payment Methods.\n\n**Tax Exemption**\nIf your organization is tax-exempt, upload your exemption certificate in Settings > Billing > Tax Exemption. Future invoices will not include tax; past invoices cannot be retroactively adjusted.",
+    "last_updated": "2026-04-08",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-013",
+    "title": "CloudDash REST API — Authentication & Getting Started",
+    "category": "api",
+    "tags": ["api", "authentication", "rest", "getting-started", "sdk"],
+    "content": "The CloudDash API allows you to programmatically access dashboards, alerts, metrics, and account data.\n\n**Base URL**: https://api.clouddash.io/v1\n\n**Authentication**\nAll API requests require an API key passed in the request header:\n```\nAuthorization: Bearer YOUR_API_KEY\n```\n\nObtain your API key from Settings > API & Integrations.\n\n**Rate Limits**\n- Starter: 100 requests/minute\n- Pro: 1,000 requests/minute\n- Enterprise: 10,000 requests/minute\n\nRate limit headers are returned with every response:\n- X-RateLimit-Limit: Total requests allowed per minute\n- X-RateLimit-Remaining: Requests remaining in current window\n- X-RateLimit-Reset: Unix timestamp when the limit resets\n\n**Quick Start Example**\n```python\nimport requests\n\nheaders = {'Authorization': 'Bearer YOUR_API_KEY'}\nresponse = requests.get('https://api.clouddash.io/v1/dashboards', headers=headers)\nprint(response.json())\n```\n\n**SDKs Available**\n- Python: `pip install clouddash-sdk`\n- Node.js: `npm install @clouddash/sdk`\n- Go: `go get github.com/clouddash/go-sdk`\n\n**Error Codes**\n- 401: Invalid or missing API key\n- 403: Insufficient permissions\n- 429: Rate limit exceeded\n- 500: Internal server error (contact support if persistent)",
+    "last_updated": "2026-04-20",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-014",
+    "title": "Webhook Configuration for Alert Notifications",
+    "category": "api",
+    "tags": ["webhook", "notifications", "alerts", "integration", "api"],
+    "content": "CloudDash can send real-time alert notifications to any webhook endpoint.\n\n**Setting Up a Webhook**\n1. Go to Alerts > Notification Channels > Add Channel > Webhook.\n2. Enter your webhook URL (must be HTTPS).\n3. Optionally add custom headers (e.g., for authentication).\n4. Select the events to receive: Alert Fired, Alert Resolved, Alert Acknowledged.\n5. Click 'Test Webhook' to verify CloudDash can reach your endpoint.\n\n**Webhook Payload Format**\n```json\n{\n  \"event\": \"alert.fired\",\n  \"alert_id\": \"alrt_abc123\",\n  \"policy_name\": \"High CPU Usage\",\n  \"severity\": \"critical\",\n  \"triggered_at\": \"2026-04-20T14:32:00Z\",\n  \"resource\": {\n    \"type\": \"EC2\",\n    \"id\": \"i-0abc123def456\",\n    \"region\": \"us-east-1\"\n  },\n  \"metric\": {\n    \"name\": \"CPUUtilization\",\n    \"value\": 94.2,\n    \"threshold\": 90\n  }\n}\n```\n\n**Webhook Security**\nAll webhook payloads include a signature header:\n```\nX-CloudDash-Signature: sha256=<HMAC_SHA256_of_payload>\n```\nVerify this signature using your webhook secret (found in the channel settings) to ensure the payload is from CloudDash.\n\n**Retry Policy**\nIf your endpoint returns a non-2xx response, CloudDash retries up to 5 times with exponential backoff (1s, 2s, 4s, 8s, 16s).",
+    "last_updated": "2026-04-15",
+    "applies_to": ["Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-015",
+    "title": "Audit Logs — Access and Configuration",
+    "category": "account",
+    "tags": ["audit", "logs", "security", "compliance", "activity"],
+    "content": "CloudDash maintains a full audit log of all user and system actions in your workspace.\n\n**Accessing Audit Logs**\n1. Go to Settings > Security > Audit Logs.\n2. Filter by date range, user, action type, or resource.\n3. Export logs to CSV for compliance reporting.\n\n**What is Logged**\n- User login/logout events (including SSO)\n- Team member invitations, role changes, and removals\n- Integration creation, modification, and deletion\n- Alert policy creation, modification, and deletion\n- Dashboard creation, sharing, and deletion\n- API key generation and revocation\n- Billing plan changes\n- SSO configuration changes\n\n**Log Retention**\n- Starter: 30 days\n- Pro: 90 days\n- Enterprise: 12 months (configurable up to 7 years for compliance)\n\n**Exporting Logs for SIEM Integration**\nEnterprise customers can stream audit logs to a SIEM (e.g., Splunk, Datadog, Elastic) via webhook or S3 export. Configure under Settings > Security > Log Export.\n\n**Immutability**\nAudit logs are immutable and cannot be deleted or modified by any user, including Admins. This ensures compliance with SOC 2 and GDPR requirements.",
+    "last_updated": "2026-03-28",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-016",
+    "title": "Cost Optimization Recommendations — How It Works",
+    "category": "faq",
+    "tags": ["cost", "optimization", "savings", "recommendations", "cloud-spend"],
+    "content": "CloudDash's Cost Optimization engine analyzes your cloud spending and identifies opportunities to reduce costs.\n\n**How It Works**\n1. CloudDash collects cost and usage data from AWS Cost Explorer, GCP Billing, and Azure Cost Management.\n2. The engine runs daily analysis to identify:\n   - **Idle resources**: EC2 instances, VMs, or databases with <5% average utilization over 14 days.\n   - **Oversized resources**: Resources consistently using <30% of provisioned capacity.\n   - **Reserved Instance opportunities**: On-demand usage patterns that would benefit from RIs or Savings Plans.\n   - **Data transfer costs**: Unusual spikes in cross-region or internet egress.\n3. Recommendations appear in the Cost > Recommendations tab with estimated monthly savings.\n\n**Acting on Recommendations**\n- Each recommendation includes a risk level (Low/Medium/High) and a one-click action (where supported).\n- Low-risk actions (e.g., deleting unattached EBS volumes) can be executed directly from CloudDash.\n- Higher-risk actions include detailed steps to perform manually with confirmation checkboxes.\n\n**Accuracy**\nRecommendations are based on historical data. CloudDash does not have visibility into future planned usage changes. Always review recommendations before acting, especially for production resources.\n\nCost optimization features are available on Pro and Enterprise plans.",
+    "last_updated": "2026-04-18",
+    "applies_to": ["Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-017",
+    "title": "GCP Integration Setup Guide",
+    "category": "troubleshooting",
+    "tags": ["gcp", "google-cloud", "integration", "service-account", "setup"],
+    "content": "To integrate CloudDash with Google Cloud Platform:\n\n**Step 1 — Create a Service Account**\n1. In GCP Console, go to IAM & Admin > Service Accounts.\n2. Click 'Create Service Account'. Name it 'clouddash-monitor'.\n3. Assign the following roles:\n   - Monitoring Viewer\n   - Cloud Asset Viewer\n   - BigQuery Resource Viewer (if monitoring BigQuery)\n   - Billing Account Viewer (for cost data)\n4. Click 'Done'.\n\n**Step 2 — Create and Download Key**\n1. Click on the service account > Keys > Add Key > JSON.\n2. A JSON key file will download automatically.\n\n**Step 3 — Add Integration in CloudDash**\n1. Go to Integrations > Add Integration > Google Cloud Platform.\n2. Upload the JSON key file.\n3. Select the GCP projects you want to monitor.\n4. Click 'Test Connection' then 'Save'.\n\n**Common Issues**\n- *'Permission Denied'*: Ensure all four roles listed above are assigned to the service account.\n- *'No projects found'*: The service account must be added at the organization level, not just the project level, to see multiple projects.\n- *Metrics delayed*: GCP Cloud Monitoring can have up to a 3-minute ingestion delay for some metrics.\n\nOnce connected, metrics will appear in CloudDash within 5 minutes.",
+    "last_updated": "2026-04-14",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-018",
+    "title": "Data Retention and Export Policy",
+    "category": "faq",
+    "tags": ["data-retention", "export", "gdpr", "data", "storage"],
+    "content": "**Data Retention Periods by Plan**\n- Starter: 7 days of metric data, 30 days of audit logs\n- Pro: 90 days of metric data, 90 days of audit logs\n- Enterprise: 13 months of metric data, up to 7 years of audit logs\n\n**Data Export**\nYou can export your data at any time:\n1. **Dashboard Data**: Use the export button on any dashboard to download a CSV or PNG.\n2. **Metric Data**: Use the API endpoint GET /v1/metrics/export with a time range parameter.\n3. **Audit Logs**: Export from Settings > Security > Audit Logs > Export CSV.\n4. **Full Account Export**: Enterprise customers can request a full data export by contacting support. The export is delivered as a compressed archive within 72 hours.\n\n**Data Deletion**\n- When you cancel your subscription, data is retained for 30 days, then permanently deleted.\n- You can request immediate deletion by contacting privacy@clouddash.io (GDPR right to erasure).\n- Deletion requests are processed within 30 days.\n\n**Data Residency**\nBy default, CloudDash stores data in US-East (AWS us-east-1). Enterprise customers can request EU (eu-west-1) or AP (ap-southeast-1) data residency.\n\n**Compliance**\nCloudDash is SOC 2 Type II certified and GDPR compliant. Our Data Processing Agreement (DPA) is available at clouddash.io/legal/dpa.",
+    "last_updated": "2026-04-02",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-019",
+    "title": "Azure Monitor Integration Setup",
+    "category": "troubleshooting",
+    "tags": ["azure", "integration", "monitor", "setup", "credentials"],
+    "content": "To integrate CloudDash with Microsoft Azure:\n\n**Step 1 — Register an App in Azure AD**\n1. Go to Azure Portal > Azure Active Directory > App Registrations > New Registration.\n2. Name it 'CloudDash Monitor'. Select 'Accounts in this organizational directory only'.\n3. Click Register. Note the Application (client) ID and Directory (tenant) ID.\n\n**Step 2 — Create a Client Secret**\n1. In the app registration, go to Certificates & Secrets > New Client Secret.\n2. Set an expiry (recommend 24 months). Copy the secret value immediately (it won't be shown again).\n\n**Step 3 — Assign Reader Role**\n1. Go to your Azure Subscription > Access Control (IAM) > Add Role Assignment.\n2. Role: Reader. Assign to your registered app ('CloudDash Monitor').\n3. For cost data, also assign the role: Cost Management Reader.\n\n**Step 4 — Add Integration in CloudDash**\n1. Go to Integrations > Add Integration > Microsoft Azure.\n2. Enter Tenant ID, Client ID, Client Secret, and Subscription ID.\n3. Click 'Test Connection' then 'Save'.\n\n**Troubleshooting**\n- *'AuthorizationFailed'*: Ensure the Reader role is assigned at the subscription level, not just resource group level.\n- *'Invalid client secret'*: The secret may have expired. Create a new one in Azure AD.\n- Multi-subscription monitoring requires repeating Step 3 for each subscription.",
+    "last_updated": "2026-04-16",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  },
+  {
+    "id": "KB-020",
+    "title": "Onboarding Guide — Getting Started with CloudDash",
+    "category": "faq",
+    "tags": ["onboarding", "getting-started", "setup", "quickstart"],
+    "content": "Welcome to CloudDash! Follow this guide to get up and running in under 30 minutes.\n\n**Step 1 — Connect Your First Cloud Account (5 min)**\nGo to Integrations > Add Integration and select your cloud provider (AWS, GCP, or Azure). Follow the provider-specific setup guide (see KB-006, KB-017, or KB-019).\n\n**Step 2 — Explore Auto-Generated Dashboards (2 min)**\nOnce your integration is connected, CloudDash automatically creates dashboards for your most common resources (EC2 instances, RDS databases, Lambda functions, etc.). Find them under Dashboards > Auto-Generated.\n\n**Step 3 — Set Up Your First Alert (5 min)**\n1. Go to Alerts > Create Alert Policy.\n2. Select a metric (e.g., CPUUtilization).\n3. Set a threshold (e.g., > 80% for 5 minutes).\n4. Add a notification channel (email, Slack, or webhook).\n5. Save and activate.\n\n**Step 4 — Invite Your Team (2 min)**\nGo to Settings > Team Management > Invite Member. Add your team with appropriate roles.\n\n**Step 5 — Explore Cost Recommendations (Pro/Enterprise)**\nGo to Cost > Recommendations to see immediate savings opportunities.\n\n**Need Help?**\n- Documentation: docs.clouddash.io\n- Community forum: community.clouddash.io\n- Support: support@clouddash.io\n- Live chat (Pro/Enterprise): Available in the bottom-right corner of the app.",
+    "last_updated": "2026-04-20",
+    "applies_to": ["Starter", "Pro", "Enterprise"]
+  }
+]
