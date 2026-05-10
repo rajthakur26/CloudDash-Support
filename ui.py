@@ -7,7 +7,7 @@ import os
 import requests
 import streamlit as st
 
-API_BASE = os.getenv("API_BASE_URL", "https://clouddash-backend.onrender.com")
+API_BASE = os.getenv("API_BASE_URL", "https://clouddash-support.onrender.com")
 
 # ── Page config ────────────────────────────────────────────────────────────
 
