@@ -41,13 +41,16 @@ logger = get_logger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting CloudDash Support API", env=settings.app_env)
-    # Eagerly initialise retriever and orchestrator so first request is fast
-    get_retriever()
-    get_orchestrator()
-    logger.info("System ready")
-    yield
-    logger.info("Shutting down CloudDash Support API")
 
+    # Lazy loading for Render deployment
+    # Heavy components like ChromaDB + SentenceTransformer
+    # will initialize only on first request instead of startup.
+    
+    logger.info("System ready")
+    
+    yield
+    
+    logger.info("Shutting down CloudDash Support API")
 
 # ── App ────────────────────────────────────────────────────────────────────
 
